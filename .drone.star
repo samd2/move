@@ -143,9 +143,9 @@ def osx_cxx(name, cxx, cxxflags="", packages="", llvm_os="", llvm_ver="", arch="
   if xcode_version:
     environment_step["DEVELOPER_DIR"] = "/Applications/Xcode-" + xcode_version +  ".app/Contents/Developer"
     if not osx_version:
-        if xcode_version[0:3] in [ "12.","11.","10."]:
+        if xcode_version[0:2] in [ "12","11","10"]:
             osx_version="catalina"
-        elif xcode_version[0:2] in [ "9.","8.","7.","6."]:
+        elif xcode_version[0:1] in [ "9","8","7","6"]:
             osx_version="highsierra"
   else:
     osx_version="catalina"
