@@ -223,16 +223,17 @@ jobs:
             b2_variant: "variant=debug"
             b2_testflags: "testing.launcher=valgrind"
             valgrind_opts: "--error-exitcode=1"
-          - name: "COMMENT=cmake Job 18"
-            buildtype: "b5847f804b-e70eed6a8b"
-            packages: "binutils-gold gdb libc6-dbg"
-            packages_to_remove: ""
-            os: "ubuntu-16.04"
-            cxx: "g++"
-            sources: ""
-            llvm_os: ""
-            llvm_ver: ""
-            comment: "cmake"
+# 
+#           - name: "COMMENT=cmake Job 18"
+#             buildtype: "b5847f804b-e70eed6a8b"
+#             packages: "binutils-gold gdb libc6-dbg"
+#             packages_to_remove: ""
+#             os: "ubuntu-16.04"
+#             cxx: "g++"
+#             sources: ""
+#             llvm_os: ""
+#             llvm_ver: ""
+#             comment: "cmake"
           - name: "COMMENT=Coverity Scan B2_TOOLSET=clang Job 19"
             buildtype: "b5847f804b-cce9827eb5"
             packages: "binutils-gold gdb libc6-dbg"
@@ -488,97 +489,102 @@ jobs:
           fi
 
           fi
-  osx:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: "B2_TOOLSET=clang B2_CXXSTD=03,11,17 Job 13"
-            buildtype: "boost"
-            packages: ""
-            os: "macos-10.15"
-            cxx: "g++"
-            sources: ""
-            llvm_os: ""
-            llvm_ver: ""
-            xcode_version: 11.7
-            b2_toolset: "clang"
-            b2_cxxstd: "03,11,17"
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set DEVELOPER_DIR
-        if: matrix.xcode_version != ''
-        run: echo "DEVELOPER_DIR=/Applications/Xcode_${{ matrix.xcode_version }}.app/Contents/Developer" >> $GITHUB_ENV
-      - name: Test DEVELOPER_DIR
-        run: echo $DEVELOPER_DIR
-
-      - name: "osx"
-        shell: bash
-        env:
-          CXX: ${{ matrix.cxx }}
-          SOURCES: ${{ matrix.sources }}
-          LLVM_OS: ${{ matrix.llvm_os }}
-          LLVM_VER: ${{ matrix.llvm_ver }}
-          PACKAGES: ${{ matrix.packages }}
-          JOB_BUILDTYPE: ${{ matrix.buildtype }}
-          B2_TOOLSET: ${{ matrix.b2_toolset }}
-          B2_CXXSTD: ${{ matrix.b2_cxxstd }}
-          B2_CXXFLAGS: ${{ matrix.b2_cxxflags }}
-          COMMENT: ${{ matrix.comment }}
-          B2_DEFINES: ${{ matrix.b2_defines }}
-          B2_VARIANT: ${{ matrix.b2_variant }}
-          B2_LINKFLAGS: ${{ matrix.b2_linkflags }}
-          UBSAN_OPTIONS: ${{ matrix.ubsan_options }}
-          B2_TESTFLAGS: ${{ matrix.b2_testflags }}
-          VALGRIND_OPTS: ${{ matrix.valgrind_opts }}
-          TRAVIS_BRANCH: ${{ github.base_ref }}
-          TRAVIS_OS_NAME: "osx"
-        run: |
-          echo '==================================> SETUP'
-          set -ex
-          uname -a
-          whoami
-          sudo mv /Library/Developer/CommandLineTools /Library/Developer/CommandLineTools.bck
-          # BOOST_CI_ORG=boostorg BOOST_CI_BRANCH=master && /usr/local/bin/wget https://github.com/$BOOST_CI_ORG/boost-ci/archive/$BOOST_CI_BRANCH.tar.gz && tar -xvf $BOOST_CI_BRANCH.tar.gz && mkdir -p .github &&  mv boost-ci-$BOOST_CI_BRANCH .github/boost-ci
-          echo '==================================> PACKAGES'
-          echo "the equivalent of osx-cxx-install.sh would run here."
-
-          echo '==================================> INSTALL AND COMPILE'
-          set -e
-          set -x
-          export TRAVIS_BUILD_DIR=$(pwd)
-          export TRAVIS_BRANCH=${TRAVIS_BRANCH:-$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')}
-          export VCS_COMMIT_ID=$GITHUB_SHA
-          export GIT_COMMIT=$GITHUB_SHA
-          export REPO_NAME=$(basename $GITHUB_REPOSITORY)
-          export USER=$(whoami)
-          export CC=${CC:-gcc}
-          export PATH=~/.local/bin:/usr/local/bin:$PATH
-
-          if [ "$JOB_BUILDTYPE" == "boost" ]; then
-
-          echo '==================================> INSTALL'
-
-          git clone https://github.com/boostorg/boost-ci.git boost-ci
-          cp -pr boost-ci/ci boost-ci/.codecov.yml .
-
-          if [ "$TRAVIS_OS_NAME" == "osx" ]; then
-              unset -f cd
-          fi
-
-          export SELF=`basename $REPO_NAME`
-          export BOOST_CI_TARGET_BRANCH="$TRAVIS_BRANCH"
-          export BOOST_CI_SRC_FOLDER=$(pwd)
-
-          . ./ci/common_install.sh
-
-          echo '==================================> SCRIPT'
-
-          cd $BOOST_ROOT/libs/$SELF
-          ci/travis/build.sh
-
-          fi
+# 
+#   osx:
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         include:
+# 
+#           - name: "B2_TOOLSET=clang B2_CXXSTD=03,11,17 Job 13"
+#             buildtype: "boost"
+#             packages: ""
+#             os: "macos-10.15"
+#             cxx: "g++"
+#             sources: ""
+#             llvm_os: ""
+#             llvm_ver: ""
+#             xcode_version: 11.7
+#             b2_toolset: "clang"
+#             b2_cxxstd: "03,11,17"
+#
+# Github Actions only supports Xcode versions 10.3 and above
+# 
+# 
+#     runs-on: ${{ matrix.os }}
+# 
+#     steps:
+#       - uses: actions/checkout@v2
+# 
+#       - name: Set DEVELOPER_DIR
+#         if: matrix.xcode_version != ''
+#         run: echo "DEVELOPER_DIR=/Applications/Xcode_${{ matrix.xcode_version }}.app/Contents/Developer" >> $GITHUB_ENV
+#       - name: Test DEVELOPER_DIR
+#         run: echo $DEVELOPER_DIR
+# 
+#       - name: "osx"
+#         shell: bash
+#         env:
+#           CXX: ${{ matrix.cxx }}
+#           SOURCES: ${{ matrix.sources }}
+#           LLVM_OS: ${{ matrix.llvm_os }}
+#           LLVM_VER: ${{ matrix.llvm_ver }}
+#           PACKAGES: ${{ matrix.packages }}
+#           JOB_BUILDTYPE: ${{ matrix.buildtype }}
+#           B2_TOOLSET: ${{ matrix.b2_toolset }}
+#           B2_CXXSTD: ${{ matrix.b2_cxxstd }}
+#           B2_CXXFLAGS: ${{ matrix.b2_cxxflags }}
+#           COMMENT: ${{ matrix.comment }}
+#           B2_DEFINES: ${{ matrix.b2_defines }}
+#           B2_VARIANT: ${{ matrix.b2_variant }}
+#           B2_LINKFLAGS: ${{ matrix.b2_linkflags }}
+#           UBSAN_OPTIONS: ${{ matrix.ubsan_options }}
+#           B2_TESTFLAGS: ${{ matrix.b2_testflags }}
+#           VALGRIND_OPTS: ${{ matrix.valgrind_opts }}
+#           TRAVIS_BRANCH: ${{ github.base_ref }}
+#           TRAVIS_OS_NAME: "osx"
+#         run: |
+#           echo '==================================> SETUP'
+#           set -ex
+#           uname -a
+#           whoami
+#           sudo mv /Library/Developer/CommandLineTools /Library/Developer/CommandLineTools.bck
+#           # BOOST_CI_ORG=boostorg BOOST_CI_BRANCH=master && /usr/local/bin/wget https://github.com/$BOOST_CI_ORG/boost-ci/archive/$BOOST_CI_BRANCH.tar.gz && tar -xvf $BOOST_CI_BRANCH.tar.gz && mkdir -p .github &&  mv boost-ci-$BOOST_CI_BRANCH .github/boost-ci
+#           echo '==================================> PACKAGES'
+#           echo "the equivalent of osx-cxx-install.sh would run here."
+# 
+#           echo '==================================> INSTALL AND COMPILE'
+#           set -e
+#           set -x
+#           export TRAVIS_BUILD_DIR=$(pwd)
+#           export TRAVIS_BRANCH=${TRAVIS_BRANCH:-$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')}
+#           export VCS_COMMIT_ID=$GITHUB_SHA
+#           export GIT_COMMIT=$GITHUB_SHA
+#           export REPO_NAME=$(basename $GITHUB_REPOSITORY)
+#           export USER=$(whoami)
+#           export CC=${CC:-gcc}
+#           export PATH=~/.local/bin:/usr/local/bin:$PATH
+# 
+#           if [ "$JOB_BUILDTYPE" == "boost" ]; then
+# 
+#           echo '==================================> INSTALL'
+# 
+#           git clone https://github.com/boostorg/boost-ci.git boost-ci
+#           cp -pr boost-ci/ci boost-ci/.codecov.yml .
+# 
+#           if [ "$TRAVIS_OS_NAME" == "osx" ]; then
+#               unset -f cd
+#           fi
+# 
+#           export SELF=`basename $REPO_NAME`
+#           export BOOST_CI_TARGET_BRANCH="$TRAVIS_BRANCH"
+#           export BOOST_CI_SRC_FOLDER=$(pwd)
+# 
+#           . ./ci/common_install.sh
+# 
+#           echo '==================================> SCRIPT'
+# 
+#           cd $BOOST_ROOT/libs/$SELF
+#           ci/travis/build.sh
+# 
+#           fi
